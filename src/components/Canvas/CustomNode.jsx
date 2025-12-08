@@ -1,73 +1,67 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
-import { NODE_STYLES } from '../../utils/constants';
-import { useNodeSelection } from '../../hooks/useNodeSelection';
 
-const NODE_ICONS = {
-  start: '▶️',
-  task: '📋',
-  approval: '✅',
-  automated: '⚙️',
-  end: '🏁',
+const baseClasses =
+  'rounded-lg px-3 py-2 text-xs shadow-md border flex flex-col gap-1 min-w-[140px]';
+
+const typeStyles = {
+  start: 'bg-green-600 border-green-400 text-white',
+  task: 'bg-slate-800 border-slate-500 text-slate-50',
+  approval: 'bg-amber-500 border-amber-300 text-slate-900',
+  automated: 'bg-sky-600 border-sky-400 text-white',
+  end: 'bg-rose-600 border-rose-400 text-white',
+  default: 'bg-slate-700 border-slate-500 text-slate-50',
 };
 
-export const CustomNode = ({ data, id, isConnectable, type, selected }) => {
-  const { selectNode } = useNodeSelection();
+export function CustomNode({ id, data, type }) {
+  const nodeType = type || data?.type || 'default';
+  const styles = typeStyles[nodeType] || typeStyles.default;
 
-  const handleNodeClick = (e) => {
-    e.stopPropagation();
-    selectNode(id);
-  };
+  const title =
+    data?.title ||
+    (nodeType === 'start'
+      ? 'Start'
+      : nodeType === 'task'
+      ? 'Task'
+      : nodeType === 'approval'
+      ? 'Approval'
+      : nodeType === 'automated'
+      ? 'Automated Step'
+      : nodeType === 'end'
+      ? 'End'
+      : 'Step');
 
-  const style = NODE_STYLES[type] || NODE_STYLES.task;
+  const subtitle =
+    nodeType === 'start'
+      ? 'Entry point'
+      : nodeType === 'task'
+      ? data?.description || 'Human task'
+      : nodeType === 'approval'
+      ? data?.approverRole || 'Manager approval'
+      : nodeType === 'automated'
+      ? data?.actionLabel || 'System action'
+      : nodeType === 'end'
+      ? data?.endMessage || 'Workflow complete'
+      : data?.subtitle || '';
 
   return (
-    <div
-      onClick={handleNodeClick}
-      className={`
-        px-4 py-3 rounded-lg min-w-[180px] cursor-pointer
-        transition-all duration-200 border-2
-        ${selected 
-          ? 'ring-2 ring-blue-400 shadow-lg' 
-          : 'shadow-md hover:shadow-lg'
-        }
-      `}
-      style={{
-        backgroundColor: style.background,
-        borderColor: style.border,
-        color: style.color,
-      }}
-    >
-      <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={isConnectable}
-        className="bg-blue-500 w-2 h-2"
-      />
-
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-lg">{NODE_ICONS[type]}</span>
-        <span className="text-xs font-bold uppercase opacity-75">
-          {type}
-        </span>
-      </div>
-
-      <p className="font-medium text-sm truncate">
-        {data.title || 'Unnamed Node'}
-      </p>
-
-      {data.description && (
-        <p className="text-xs opacity-75 mt-1 truncate">
-          {data.description}
-        </p>
+    <div className={`${baseClasses} ${styles}`}>
+      {/* Handles */}
+      {nodeType !== 'start' && (
+        <Handle type="target" position={Position.Left} className="w-2 h-2" />
+      )}
+      {nodeType !== 'end' && (
+        <Handle type="source" position={Position.Right} className="w-2 h-2" />
       )}
 
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        className="bg-green-500 w-2 h-2"
-      />
+      {/* Content */}
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">{title}</span>
+        <span className="text-[10px] opacity-80">#{id}</span>
+      </div>
+      {subtitle && (
+        <div className="text-[10px] opacity-80 leading-snug">{subtitle}</div>
+      )}
     </div>
   );
-};
+}
