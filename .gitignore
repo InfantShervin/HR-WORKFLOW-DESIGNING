@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Env and local config
+.env
+.env.*.local
+
+# Debug / coverage
+coverage
+*.log
+
