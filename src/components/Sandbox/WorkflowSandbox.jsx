@@ -85,11 +85,12 @@ export const WorkflowSandbox = ({ isOpen }) => {
             {' | '}
             <span className="font-medium">Total Steps:</span> {result.totalSteps}
           </div>
-
+          {/*
           <ExecutionLog
             steps={result.steps}
             errors={result.errors}
           />
+           */}
         </>
       )}
     </div>

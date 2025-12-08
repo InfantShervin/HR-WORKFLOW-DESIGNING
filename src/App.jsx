@@ -3,11 +3,13 @@ import { MainLayout } from './components/Layout/MainLayout';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
+
 function App() {
   useEffect(() => {
     // Log app startup
     console.log('🚀 HR Workflow Designer initialized');
   }, []);
+
 
   return (
     <div className="w-full h-screen">
@@ -21,5 +23,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

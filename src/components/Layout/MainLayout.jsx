@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import { Header } from './Header';
 import { NodePalette } from '../Sidebar/NodePalette';
@@ -14,7 +14,6 @@ import { Input } from '../Common/Input';
 
 export const MainLayout = () => {
   const {
-    selectedNodeId,
     showSandbox,
     toggleSandbox,
     showFormPanel,
@@ -26,8 +25,11 @@ export const MainLayout = () => {
     toggleImportModal,
   } = useUIStore();
 
-  const { saveWorkflow, loadWorkflow, currentWorkflowId } = useWorkflowStore();
-  const [workflowName, setWorkflowName] = useLocalStorage('currentWorkflowName', '');
+  const { saveWorkflow } = useWorkflowStore();
+  const [workflowName, setWorkflowName] = useLocalStorage(
+    'currentWorkflowName',
+    '',
+  );
   const [saveDialogName, setSaveDialogName] = useState(workflowName);
 
   const handleSaveWorkflow = () => {
@@ -41,20 +43,22 @@ export const MainLayout = () => {
   };
 
   const handleImportWorkflow = (e) => {
-    const file = e.target.files?.;
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const workflow = JSON.parse(event.target.result);
-        // TODO: Load workflow into canvas
+        // TODO: Load workflow into canvas using your workflow store
+        console.log('Imported workflow:', workflow);
         alert('Workflow imported successfully');
         toggleImportModal();
       } catch (error) {
         alert('Invalid workflow file');
       }
     };
+
     reader.readAsText(file);
   };
 
@@ -69,16 +73,12 @@ export const MainLayout = () => {
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <div
-          className={`
-            bg-white border-r border-gray-200 transition-all duration-300
-            ${sidebarOpen ? 'w-64' : 'w-20'}
-            ${sidebarOpen ? 'block' : 'hidden'} md:block
-          `}
-        >
+       {/* Sidebar */}
+       <div className="w-64 bg-red-500 border-r border-gray-200">
+          <div style={{ color: 'white', padding: '20px' }}>TEST SIDEBAR</div>
           <NodePalette collapsed={!sidebarOpen} />
-        </div>
+       </div>
+
 
         {/* Canvas Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -104,9 +104,7 @@ export const MainLayout = () => {
             <Button variant="secondary" onClick={toggleSaveModal}>
               Cancel
             </Button>
-            <Button onClick={handleSaveWorkflow}>
-              Save Workflow
-            </Button>
+            <Button onClick={handleSaveWorkflow}>Save Workflow</Button>
           </>
         }
       >
