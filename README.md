@@ -1,173 +1,162 @@
-HR Workflow Designer — React + Vite
+# HR Workflow Designer — React + Vite
 
-This project implements a complete HR Workflow Designer with a drag-and-drop interface, node-based workflow construction, validation, simulation, and workflow export/import features.
-It is built using React, Vite, React Flow, Zustand, and TailwindCSS.
+This project implements a complete **HR Workflow Designer** with a drag-and-drop interface, node-based workflow construction, validation, simulation, and workflow export/import features. It is built using **React**, **Vite**, **React Flow**, **Zustand**, and **TailwindCSS**.
 
-The project follows a modular architecture that cleanly separates UI components, workflow state, validation logic, and simulation functionality.
+The project follows a **modular architecture** that cleanly separates UI components, workflow state, validation logic, and simulation functionality.
 
-✨ Features
+---
 
-Visual workflow builder using React Flow
+## ✨ Features
 
-Drag-and-drop node placement
+- Visual workflow builder using **React Flow**
+- Drag-and-drop node placement
+- Five workflow node types: **Start, Task, Approval, Automated, End**
+- Dynamic forms for node configuration
+- Real-time validation:
+  - Cycle detection  
+  - Unreachable nodes  
+  - Start/End rules  
+- Workflow simulation with step-by-step execution logs
+- Save / Load workflows locally
+- Export as **JSON** and **CSV**
+- Global workflow/state management using **Zustand**
+- Modern UI powered by **TailwindCSS**
 
-Five node types: Start, Task, Approval, Automated, End
+---
 
-Dynamic forms for node configuration
+## 🏗 Architecture
 
-Real-time validation (cycles, unreachable nodes, Start/End rules)
+The system is structured around **three major layers**:
 
-Workflow simulation with step-by-step execution logs
+### **1. React UI Components**
+- Node palette  
+- Forms panel  
+- Header & layout  
+- Workflow sandbox  
 
-Save / Load workflows locally
+### **2. React Flow Canvas**
+- Renders workflow nodes and edges  
+- Supports dragging, selecting, connecting  
+- Custom node components for each workflow step type  
 
-JSON and CSV export
+### **3. Zustand Workflow Store**
+- Stores:
+  - Nodes  
+  - Edges  
+  - Saved workflows  
+  - UI state (selection, modals, active panels)  
+  - Simulation state  
+- Acts as the **single source of truth** for all workflow data
 
-Global workflow/state management with Zustand
+```
+React UI  ↔  Zustand Workflow Store  ↔  React Flow Engine
+                    ↘ Validation + Simulation ↙
+```
 
-TailwindCSS styling
+All workflow changes flow through the Zustand store, ensuring correct synchronization between the canvas, forms, and simulation.
 
-🏗 Architecture
+---
 
-The system is structured around three major layers:
+## ▶️ How to Run
 
-React UI Components
-
-Node palette
-
-Forms panel
-
-Header & layout
-
-Workflow sandbox
-
-React Flow Canvas
-
-Renders nodes and edges
-
-Supports dragging, selecting, connecting
-
-Custom node components
-
-Zustand Workflow Store
-
-Nodes
-
-Edges
-
-Saved workflows
-
-UI state (panels, selections)
-
-Simulation state
-
-React UI ↔ Zustand Store ↔ React Flow Engine
-       ↘ Validation + Simulation ↙
-
-
-All workflow changes go through the Zustand store, making it the single source of truth.
-
-▶️ How to Run
-
-Clone the project:
-
+### **1. Clone the project**
+```
 git clone https://github.com/InfantShervin/HR-WORKFLOW-DESIGNER.git
 cd hr-workflow-designer
+```
 
-
-Install dependencies:
-
+### **2. Install dependencies**
+```
 npm install
+```
 
-
-Start the development server:
-
+### **3. Start the development server**
+```
 npm run dev
+```
 
-
-The application will be available at:
-
+### **4. Open the application**
+Visit:  
 http://localhost:5173
 
-🧠 Design Decisions
-React Flow for Canvas Rendering
+---
 
-Chosen for its efficient graph rendering, custom node support, viewport control, and built-in edge management.
+## 🧠 Design Decisions
 
-Zustand Instead of Redux
+### **React Flow for Canvas Rendering**
+Selected because it offers:
+- Efficient graph rendering  
+- Custom node support  
+- Built-in edge/handle management  
+- Viewport capabilities (zoom, pan)
 
-Lightweight, fast, minimal boilerplate, and ideal for workflow-style object storage.
+### **Zustand Instead of Redux**
+Zustand was chosen because it is:
+- Lightweight  
+- Fast  
+- Minimal in boilerplate  
+- Ideal for storing complex object structures like workflow graphs  
 
-Modular Node System
+### **Modular Node Architecture**
+Each node type consists of:
+- A rendering component  
+- A configuration form  
+- Validation logic  
 
-Each node type has:
+This makes the system easy to scale with new workflow node types.
 
-Its own UI component
+### **Centralized Validation**
+Validation logic is stored in `utils/validation.js`, making it:
+- Reusable across save, simulate, and load  
+- Clear and easy to maintain  
+- Cleanly separated from UI logic  
 
-Its own configuration form
+### **Mock API for Simulation**
+A frontend-only simulation layer was used to:
+- Avoid backend complexity in early development  
+- Provide a self-contained workflow runner  
+- Allow rapid testing and iteration  
 
-Its own validation rules
+---
 
-Easy to extend with future node types.
+## ✔️ What Was Completed
 
-Centralized Validation
+- Full workflow canvas with drag-and-drop support  
+- All five workflow node types implemented  
+- Forms for editing node data  
+- Real-time workflow validation  
+- Step-by-step simulation engine  
+- Workflow saving and loading  
+- Export to JSON and CSV  
+- Zustand-based global state management  
+- TailwindCSS-based UI styling  
+- Clean folder structure following best practices  
 
-All validation logic is isolated in utils/validation.js, making it reusable and easy to maintain.
+---
 
-Mock API for Simulation
+## ⏳ What Could Be Added With More Time
 
-A frontend-only simulation engine was used to avoid backend complexity and allow full portability.
+- Conditional branching logic  
+- Multi-level approval workflows  
+- Backend integration for persistent workflows  
+- Authentication and role-based permissions  
+- BPMN or XML export options  
+- Undo/redo functionality  
+- Real-time collaborative editing (multi-user mode)
 
-✔️ What Was Completed
+---
 
-Canvas with drag-and-drop nodes
+## 📄 Tools and Libraries Used
 
-Node types and configuration forms
+- **React** — UI components  
+- **React Flow** — Workflow canvas engine  
+- **Zustand** — Global workflow state  
+- **TailwindCSS** — Styling  
+- **Vite** — Build tool and dev server  
+- **ESLint** — Code quality and linting  
 
-Live validation
+---
 
-Step-by-step simulation engine
+## 📌 License
 
-Workflow saving/loading
-
-JSON and CSV export
-
-Zustand-based state management
-
-Full Tailwind UI
-
-Clean folder-based architecture
-
-⏳ What Could Be Added With More Time
-
-Conditional branching logic
-
-Multi-level approval workflows
-
-Real backend integration
-
-User authentication and role-based editing
-
-BPMN/XML export
-
-Undo/redo system
-
-Real-time collaborative editing
-
-📄 Tools and Libraries Used
-
-React — UI Components
-
-React Flow — Workflow canvas
-
-Zustand — Global State
-
-TailwindCSS — Styling
-
-Vite — Build tool
-
-ESLint — Code linting
-
-📌 License
-
-This project is for educational and prototype purposes.
+This project is for **educational and prototype purposes only**.
