@@ -18,6 +18,10 @@ export const WorkflowSandbox = ({ isOpen }) => {
       edges: workflow.edges,
     };
 
+    // Reset previous results
+    setResult(null);
+    setExecutionTime(0);
+
     // Validate
     const errors = workflow.validateWorkflow();
     if (errors.length > 0) {
@@ -32,24 +36,29 @@ export const WorkflowSandbox = ({ isOpen }) => {
     }
 
     setIsSimulating(true);
-    const startTime = performance.now();
 
     try {
       const response = await workflowService.simulate(workflowData);
-      setExecutionTime(performance.now() - startTime);
+
+      // ✅ FIX: Use result.executionTime directly (already in ms from mock)
+      setExecutionTime(response.executionTime);
       setResult(response);
 
       if (response.status === 'success') {
-        addNotification(`Simulation completed: ${response.steps.length} steps`, 'success');
+        addNotification(
+          `Simulation completed: ${response.totalSteps} steps executed`,
+          'success'
+        );
       } else {
         addNotification('Simulation encountered errors', 'error');
       }
     } catch (error) {
-      addNotification(error.message, 'error');
+      console.error('Simulation error:', error);
+      addNotification(error.message || 'Simulation failed', 'error');
       setResult({
         status: 'error',
         steps: [],
-        errors: [error.message],
+        errors: [error.message || 'Unknown error'],
         totalSteps: 0,
       });
     }
@@ -62,37 +71,62 @@ export const WorkflowSandbox = ({ isOpen }) => {
   }
 
   return (
-    <div className="bg-white border-t border-gray-200 p-6 max-h-[50vh] overflow-y-auto">
-      <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">🧪 Workflow Sandbox</h3>
-        <p className="text-sm text-gray-600">Test and simulate your workflow</p>
-      </div>
+    <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+        ✅ Workflow Sandbox
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Test and simulate your workflow execution path
+      </p>
 
-      <div className="flex gap-2 mb-6">
-        <Button
-          onClick={handleSimulate}
-          loading={isSimulating}
-          className="flex-1"
-        >
-          ▶️ Run Simulation
-        </Button>
-      </div>
+      <Button
+        onClick={handleSimulate}
+        disabled={isSimulating || workflow.nodes.length === 0}
+        className="w-full mb-4"
+      >
+        {isSimulating ? 'Running Simulation...' : '▶ Run Simulation'}
+      </Button>
 
       {result && (
-        <>
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm">
-            <span className="font-medium">Execution Time:</span> {executionTime.toFixed(2)}ms
-            {' | '}
-            <span className="font-medium">Total Steps:</span> {result.totalSteps}
+        <div className="mt-4 space-y-4">
+          {/* ✅ FIX: Display execution time properly in milliseconds */}
+          <div className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="font-semibold">Execution Time:</span>{' '}
+                <span className="text-blue-600 dark:text-blue-400 font-mono font-bold">
+                  {executionTime.toFixed(2)}ms
+                </span>
+              </div>
+              <div>
+                <span className="font-semibold">Total Steps:</span>{' '}
+                <span className="text-blue-600 dark:text-blue-400 font-bold">
+                  {result.totalSteps}
+                </span>
+              </div>
+            </div>
           </div>
-          {/*
-          <ExecutionLog
-            steps={result.steps}
-            errors={result.errors}
-          />
-           */}
-        </>
+
+          {result.status === 'error' && result.errors.length > 0 && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4">
+              <h4 className="font-semibold text-red-800 dark:text-red-400 mb-3">
+                ❌ Validation Errors:
+              </h4>
+              <ul className="list-disc list-inside text-sm text-red-700 dark:text-red-300 space-y-1">
+                {result.errors.map((err, idx) => (
+                  <li key={idx}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {result.steps && result.steps.length > 0 && (
+            <ExecutionLog steps={result.steps} errors={result.errors} />
+          )}
+        </div>
       )}
     </div>
   );
 };
+
+export default WorkflowSandbox;
