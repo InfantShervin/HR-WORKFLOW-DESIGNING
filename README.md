@@ -1,4 +1,4 @@
-# HR Workflow Designer — React + Vite
+# HR Workflow Designer 
 
 This project implements a complete **HR Workflow Designer** with a drag-and-drop interface, node-based workflow construction, validation, simulation, and workflow export/import features. It is built using **React**, **Vite**, **React Flow**, **Zustand**, and **TailwindCSS**.
 
